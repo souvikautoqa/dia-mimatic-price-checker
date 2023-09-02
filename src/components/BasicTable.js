@@ -1,5 +1,5 @@
 import React, {useMemo,useState,useEffect} from 'react'
-import { useTable } from 'react-table'
+import { useTable, useSortBy } from 'react-table';
 import { COLUMNS } from './column'
 import './table.css'
 const {db} = require('../tests/firebaseConnection');
@@ -53,10 +53,22 @@ export const BasicTable = () => {
         },[]);
 
   const columns = useMemo(() => COLUMNS, [])
-  const tableInstance = useTable({
-    columns,
-    data: priceData
-  })
+
+  const sortedPriceData = useMemo(() => {
+    return [...priceData].sort((a, b) => b.timestamp - a.timestamp);
+  }, [priceData]);
+
+
+  const tableInstance = useTable(
+    {
+      columns,
+      data: sortedPriceData,
+      initialState: {
+        sortBy: [{ id: 'timestamp', desc: true }], // Sort by timestamp in descending order by default
+      },
+    },
+    useSortBy
+  );
 
   const { 
     getTableProps, 
@@ -70,13 +82,18 @@ export const BasicTable = () => {
     <div data-testid='pricetable'>
         <table {...getTableProps()}>
             <thead>
-                {headerGroups.map(headerGroup => (
-                    <tr {...headerGroup.getHeaderGroupProps()}>
-                        {headerGroup.headers.map((column) =>(
-                            <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                        ))}
-                    </tr>
+            {headerGroups.map((headerGroup) => (
+                <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                    <th {...column.getHeaderProps(column.getSortByToggleProps())}>
+                    {column.render('Header')}
+                    <span>
+                        {column.isSorted ? (column.isSortedDesc ? ' 🔽' : ' 🔼') : ''}
+                    </span>
+                    </th>
                 ))}
+                </tr>
+            ))}
             </thead>
             <tbody {...getTableBodyProps()}>
                 {
