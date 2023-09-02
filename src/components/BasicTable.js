@@ -85,7 +85,11 @@ export const BasicTable = () => {
                         return (
                             <tr {...row.getRowProps()}>
                                 {row.cells.map((cell) => {
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                return (
+                                    <td {...cell.getCellProps()} className={cell.row.original.comparison !== 0 ? 'red-text' : ''} >
+                                        {cell.render('Cell')}
+                                    </td>
+                                );
                                 })}
                             </tr>
                         )
