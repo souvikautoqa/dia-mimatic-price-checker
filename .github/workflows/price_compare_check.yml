@@ -1,0 +1,24 @@
+name: MIMATIC PRICE CHECKER
+
+on:
+  schedule:
+    - cron: "* * * * *"
+        
+jobs:
+  test:
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Node setup
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.x
+
+      - name: Installing dependency
+        run: npm install
+
+      - name: run api test scripts     
+        run: xvfb-run -a npm run e2e
