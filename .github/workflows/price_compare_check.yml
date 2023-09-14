@@ -2,7 +2,7 @@ name: MIMATIC PRICE CHECKER
 
 on:
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 3 1 * *"
         
 jobs:
   test:
